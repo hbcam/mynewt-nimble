@@ -1949,6 +1949,8 @@ ble_gatts_find_dsc(const ble_uuid_t *svc_uuid, const ble_uuid_t *chr_uuid,
     }
 }
 
+void *my_realloc(void *ptr, size_t originalLength, size_t newLength);
+
 int
 ble_gatts_add_svcs(const struct ble_gatt_svc_def *svcs)
 {
@@ -1961,8 +1963,9 @@ ble_gatts_add_svcs(const struct ble_gatt_svc_def *svcs)
         goto done;
     }
 
-    p = realloc(ble_gatts_svc_defs,
-                (ble_gatts_num_svc_defs + 1) * sizeof *ble_gatts_svc_defs);
+    p = my_realloc(ble_gatts_svc_defs,
+                   (ble_gatts_num_svc_defs) * sizeof *ble_gatts_svc_defs,
+                   (ble_gatts_num_svc_defs + 1) * sizeof *ble_gatts_svc_defs);
     if (p == NULL) {
         rc = BLE_HS_ENOMEM;
         goto done;
