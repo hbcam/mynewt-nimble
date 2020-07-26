@@ -147,6 +147,7 @@ struct os_mempool *os_mempool_info_get_next(struct os_mempool *,
  * is NOT in bytes! The size is the number of os_membuf_t elements required for
  * the memory pool.
  */
+#if 0
 #if (OS_CFG_ALIGNMENT == OS_CFG_ALIGN_4)
 #define OS_MEMPOOL_SIZE(n,blksize)      ((((blksize) + 3) / 4) * (n))
 typedef uint32_t os_membuf_t;
@@ -154,6 +155,9 @@ typedef uint32_t os_membuf_t;
 #define OS_MEMPOOL_SIZE(n,blksize)      ((((blksize) + 7) / 8) * (n))
 typedef uint64_t os_membuf_t;
 #endif
+#endif
+#define OS_MEMPOOL_SIZE(n,blksize)      ((((blksize) + 15) / 16) * (n))
+typedef __uint128_t os_membuf_t;
 
 /** Calculates the number of bytes required to initialize a memory pool. */
 #define OS_MEMPOOL_BYTES(n,blksize)     \

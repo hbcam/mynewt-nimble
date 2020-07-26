@@ -82,7 +82,7 @@ os_mempool_init(struct os_mempool *mp, uint16_t blocks, uint32_t block_size,
         /* Blocks need to be sized properly and memory buffer should be
          * aligned
          */
-        if (((uintptr_t)membuf & (OS_ALIGNMENT - 1)) != 0) {
+        if (!__builtin_is_aligned(membuf, OS_ALIGNMENT)) {
             return OS_MEM_NOT_ALIGNED;
         }
     }
@@ -194,7 +194,7 @@ os_mempool_is_sane(const struct os_mempool *mp)
 int
 os_memblock_from(const struct os_mempool *mp, const void *block_addr)
 {
-    uintptr_t true_block_size;
+    size_t true_block_size;
     uintptr_t baddr_ptr;
     uintptr_t end;
 
@@ -211,7 +211,7 @@ os_memblock_from(const struct os_mempool *mp, const void *block_addr)
     }
 
     /* All freed blocks should be on true block size boundaries! */
-    if (((baddr_ptr - mp->mp_membuf_addr) % true_block_size) != 0) {
+    if ((((char *)baddr_ptr - (char*)mp->mp_membuf_addr) % true_block_size) != 0) {
         return 0;
     }
 
